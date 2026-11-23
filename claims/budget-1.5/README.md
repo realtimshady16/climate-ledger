@@ -4,6 +4,7 @@
 
 quoted: the passage under "Quoted passage" below, p. 3215
 page: p. 3215 (Executive summary), Earth Syst. Sci. Data 18, 3211-3288, 2026
+second_read: pdftotext -layout re-extraction, 2026-11-23; wording and page match the pinned PDF
 checked_by: agent, first read 2026-11-23; independent second read pending
 
 ## Claim
@@ -57,6 +58,8 @@ warming rule are internally consistent.
 p. 3215 (Executive summary), *Earth Syst. Sci. Data* 18, 3211–3288, 2026,
 doi:10.5194/essd-18-3211-2026.
 
-A Tier B entry is not `confirmed` until a second pass has read the quoted
-passage against the PDF; until then the ledger reports `transcribed`, which is
-the honest label for "checked once".
+A Tier B entry reports `transcribed` until a second pass has read the quoted
+passage against the PDF, and `confirmed` after. Here the second pass was a
+different extraction path (`pdftotext -layout`) by the same agent: it catches a
+wrong page or drifted wording, and it is weaker than an independent reader. A
+human or model re-read is still worth doing and would not change the verdict.

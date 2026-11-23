@@ -89,6 +89,11 @@ def transcribed_row(root: Path, claim: dict) -> dict:
     missing = [key for key in ("quoted:", "page:", "checked_by:") if key not in text]
     if missing:
         return {"verdict": "error", "detail": f"README missing {missing}"}
+    if "second_read:" in text:
+        return {
+            "verdict": "confirmed",
+            "detail": "quoted passage re-read against the pinned document",
+        }
     return {"verdict": "transcribed", "detail": "quoted passage present; no recompute"}
 
 

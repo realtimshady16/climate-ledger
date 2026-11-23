@@ -251,3 +251,19 @@ def test_xlsx_extract_rejects_missing_sheet(tmp_path):
     book.save(path)
     with pytest.raises(ValueError):
         extract.xlsx_to_csv(path, tmp_path / "a", ["Nope"])
+
+
+def test_tier_b_second_read_confirms(tmp_path):
+    root = build(tmp_path)
+    (root / "claims" / "b").mkdir()
+    (root / "claims" / "b" / "README.md").write_text(
+        "quoted: q\npage: 1\nsecond_read: yes\nchecked_by: me\n"
+    )
+    text = (root / "claims.toml").read_text()
+    text += '\n[[claims]]\nid = "b"\ndataset = "sum"\ntier = "B"\nquestion = "q"\npublished = 1\n'
+    (root / "claims.toml").write_text(text)
+
+    assert cli.freeze(root) == 0
+    assert cli.verify(root) == 0
+    payload = json.loads((root / "out" / "ledger.json").read_text())
+    assert payload["claims"][1]["verdict"] == "confirmed"

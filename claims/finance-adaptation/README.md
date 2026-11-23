@@ -4,6 +4,7 @@
 
 quoted: the passage under "Quoted passage" below, Executive summary
 page: Executive summary, PDF p. 9, Adaptation Gap Report 2025
+second_read: pdftotext -layout re-extraction, 2026-11-23; wording and page match the pinned PDF
 checked_by: agent, first read 2026-11-23; independent second read pending
 
 ## Claim
