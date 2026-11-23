@@ -6,7 +6,7 @@ Each entry answers one question — *claim → source → method → recomputed 
 verdict → date* — from raw, pinned source bytes rather than from a web page's
 summary.
 
-Live: <https://realtimshady16.github.io/climate-ledger/>
+Live: <https://realtimshady16.github.io/climate-ledger/> · DOI: [10.5281/zenodo.24463752](https://doi.org/10.5281/zenodo.24463752)
 
 **Status:** stage 6. Eight claims; all computed sources reproduce their published
 headlines, and the Tier B entries are transcribed with page references. See

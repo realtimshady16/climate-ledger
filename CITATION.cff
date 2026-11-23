@@ -11,6 +11,7 @@ authors:
 license: CC-BY-4.0
 repository-code: "https://github.com/realtimshady16/climate-ledger"
 url: "https://realtimshady16.github.io/climate-ledger/"
+doi: "10.5281/zenodo.24463752"
 keywords:
   - climate
   - carbon budget

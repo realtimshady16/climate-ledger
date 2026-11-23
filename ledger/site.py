@@ -10,6 +10,7 @@ from __future__ import annotations
 import html
 
 REPO = "https://github.com/realtimshady16/climate-ledger"
+DOI = "10.5281/zenodo.24463752"
 
 VERDICT_LABEL = {
     "confirmed": "confirmed",
@@ -130,7 +131,8 @@ def render(payload: dict, repo: str = REPO) -> str:
     The difference is shown, not hidden.</p>
     <p>Code MIT, prose and derived data CC BY 4.0. Upstream sources keep their own
     terms — see <a href="{repo}/blob/main/NOTICE.md">NOTICE.md</a>.
-    Source and method for each entry: <a href="{repo}">{repo.replace("https://", "")}</a>.</p>
+    Source and method for each entry: <a href="{repo}">{repo.replace("https://", "")}</a>.
+    Archived at <a href="https://doi.org/{DOI}">doi:{DOI}</a>.</p>
   </footer>
 </main>
 </body>
