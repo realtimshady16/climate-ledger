@@ -1,6 +1,6 @@
 [project]
 name = "climate-ledger"
-version = "0.6.0"
+version = "1.0.0"
 description = "Recompute the climate numbers everyone cites, from pinned raw data."
 requires-python = ">=3.11"
 

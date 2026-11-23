@@ -1,6 +1,6 @@
 # Climate ledger — report
 
-Generated 2026-11-23T09:06:43+00:00 by `climate-ledger/0.6.0`.
+Generated 2026-11-23T11:36:52+00:00 by `climate-ledger/1.0.0`.
 
 9 confirmed · 0 transcribed · 0 drifted · 0 failed of 9.
 
