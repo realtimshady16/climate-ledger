@@ -1,0 +1,13 @@
+# Named constants, each with a source. Nothing numeric lives in a script.
+
+[warming]
+# GISTEMP anomalies are relative to 1951-1980; WMO/IPCC headlines use 1850-1900.
+# The conversion is two steps:
+#   1. the 1880-1899 mean anomaly, recomputed from the pinned series (not a constant)
+#   2. a small 1880-1899 -> 1850-1900 correction, quoted from NASA's FAQ
+sibling_offset_c = 0.038
+sibling_offset_source = "https://data.giss.nasa.gov/gistemp/faq/"
+preindustrial_start = 1880
+preindustrial_end = 1899
+decade_start = 2015
+decade_end = 2024

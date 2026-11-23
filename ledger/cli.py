@@ -24,9 +24,17 @@ def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def load_claims(root: Path) -> list[dict]:
+def _load(root: Path, key: str) -> list[dict]:
     with (root / "claims.toml").open("rb") as handle:
-        return tomllib.load(handle)["claims"]
+        return tomllib.load(handle).get(key, [])
+
+
+def load_datasets(root: Path) -> list[dict]:
+    return _load(root, "datasets")
+
+
+def load_claims(root: Path) -> list[dict]:
+    return _load(root, "claims")
 
 
 def run_compute(root: Path, claim: dict, snapshot: Path) -> dict:
@@ -37,6 +45,10 @@ def run_compute(root: Path, claim: dict, snapshot: Path) -> dict:
         os.environ,
         LEDGER_SNAPSHOT=str(snapshot),
         LEDGER_CLAIM_ID=claim["id"],
+        LEDGER_ROOT=str(root),
+        PYTHONPATH=os.pathsep.join(
+            p for p in (str(root), os.environ.get("PYTHONPATH", "")) if p
+        ),
     )
     proc = subprocess.run(
         [sys.executable, str(script)],
@@ -55,17 +67,15 @@ def run_compute(root: Path, claim: dict, snapshot: Path) -> dict:
 
 def freeze(root: Path) -> int:
     count = 0
-    for claim in load_claims(root):
-        if claim["tier"] != "A":
-            continue
-        snapshot = provenance.freeze_claim(root, claim)
+    for dataset in load_datasets(root):
+        snapshot = provenance.freeze_dataset(root, dataset)
         prov = json.loads((snapshot / "provenance.json").read_text())
         print(
-            f"froze {claim['id']}: {snapshot.relative_to(root)}  "
+            f"froze {dataset['id']}: {snapshot.relative_to(root)}  "
             f"{prov['bytes']} bytes  sha256={prov['sha256'][:12]}…"
         )
         count += 1
-    print(f"{count} claim(s) frozen")
+    print(f"{count} dataset(s) frozen")
     return 0
 
 
@@ -83,9 +93,11 @@ def transcribed_row(root: Path, claim: dict) -> dict:
 def verify(root: Path) -> int:
     rows: list[dict] = []
     for claim in load_claims(root):
-        snapshot = provenance.latest_snapshot(root, claim["id"])
+        dataset = claim.get("dataset")
+        snapshot = provenance.latest_snapshot(root, dataset) if dataset else None
         row: dict = {
             "id": claim["id"],
+            "dataset": dataset,
             "tier": claim["tier"],
             "question": claim["question"],
             "unit": claim.get("unit"),
@@ -135,9 +147,8 @@ def write_series(root: Path, claim_id: str, series: list[dict]) -> None:
 
     out = root / "out"
     out.mkdir(exist_ok=True)
-    fields = list(series[0].keys())
     with (out / f"{claim_id}.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer = csv.DictWriter(handle, fieldnames=list(series[0].keys()))
         writer.writeheader()
         writer.writerows(series)
 
@@ -174,20 +185,21 @@ def render_report(payload: dict) -> str:
         f"{summary['drifted']} drifted · {summary['failed']} failed "
         f"of {summary['total']}.",
         "",
-        "| Claim | Tier | Published | Recomputed | Δ | Verdict | Checked |",
-        "|---|---|---|---|---|---|---|",
+        "| Claim | Dataset | Tier | Published | Recomputed | Δ | Verdict | Checked |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for row in payload["claims"]:
         recomputed = "" if row.get("value") is None else f"{row['value']:g}"
         delta = "" if row.get("delta") is None else f"{row['delta']:+g}"
         lines.append(
-            f"| `{row['id']}` | {row['tier']} | {row['published']} | {recomputed} "
-            f"| {delta} | {row['verdict']} | {row['checked_at'][:10]} |"
+            f"| `{row['id']}` | `{row.get('dataset') or '—'}` | {row['tier']} "
+            f"| {row['published']} | {recomputed} | {delta} "
+            f"| {row['verdict']} | {row['checked_at'][:10]} |"
         )
     lines += [
         "",
         "Recomputed values come from pinned raw bytes; see "
-        "`data/<claim>/<snapshot>/provenance.json`.",
+        "`data/<dataset>/<snapshot>/provenance.json`.",
         "",
     ]
     return "\n".join(lines)
@@ -206,8 +218,7 @@ def main(argv: list[str] | None = None, root: Path | None = None) -> int:
         payload = json.loads((root / "out" / "ledger.json").read_text())
         print(json.dumps(payload["summary"]))
         return code
-    if args.command == "report":
-        if not (root / "out" / "ledger.json").exists():
-            verify(root)
-        print((root / "REPORT.md").read_text())
-        return 0
+    if not (root / "out" / "ledger.json").exists():
+        verify(root)
+    print((root / "REPORT.md").read_text())
+    return 0

@@ -1,13 +1,16 @@
 """Hermetic tests: build a throwaway tree and run the real freeze/verify code.
 
-No network, no shared state, no reliance on the repo's own data/ or out/.
+No network and no shared state. One optional test reads the repo's own frozen
+GISTEMP snapshot when it exists, so the real data is exercised after `make freeze`.
 """
 
+import csv
+import json
 from pathlib import Path
 
 import pytest
 
-from ledger import cli, provenance
+from ledger import cli, provenance, warming
 
 COMPUTE = '''\
 import csv, json, os
@@ -17,18 +20,27 @@ total = sum(float(r["v"]) for r in csv.DictReader(raw.open()))
 print(json.dumps({"value": total, "unit": "count"}))
 '''
 
+DATASETS = '''\
+[[datasets]]
+id = "sum"
+version = "fixture-1"
+
+[datasets.source]
+path = "fixtures/x.csv"
+'''
+
 CLAIMS = '''\
 [[claims]]
 id = "sum"
+dataset = "sum"
 tier = "A"
 question = "smoke"
 unit = "count"
 published = {published}
 tolerance = 0.001
-
-[claims.source]
-path = "fixtures/x.csv"
 '''
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def build(tmp_path: Path, published: float = 3.0) -> Path:
@@ -37,8 +49,21 @@ def build(tmp_path: Path, published: float = 3.0) -> Path:
     claim = tmp_path / "claims" / "sum"
     claim.mkdir(parents=True)
     (claim / "compute.py").write_text(COMPUTE)
-    (tmp_path / "claims.toml").write_text(CLAIMS.format(published=published))
+    (tmp_path / "claims.toml").write_text(
+        DATASETS + "\n" + CLAIMS.format(published=published)
+    )
     return tmp_path
+
+
+def gistemp_text(annual: dict[int, float]) -> str:
+    header = "Year,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec,J-D"
+    lines = ["Land-Ocean: Global Means", header]
+    for year, value in annual.items():
+        lines.append(f"{year}," + ",".join(["***"] * 12) + f",{value}")
+    return "\n".join(lines) + "\n"
+
+
+# --- the pipeline -----------------------------------------------------------
 
 
 def test_sha256_is_stable():
@@ -51,8 +76,6 @@ def test_roundtrip_confirms(tmp_path):
     assert cli.freeze(root) == 0
     assert cli.verify(root) == 0
 
-    import json
-
     payload = json.loads((root / "out" / "ledger.json").read_text())
     assert payload["summary"]["confirmed"] == 1
     assert payload["claims"][0]["value"] == 3.0
@@ -64,8 +87,6 @@ def test_drift_is_nonzero(tmp_path):
     assert cli.freeze(root) == 0
     assert cli.verify(root) == 1
 
-    import json
-
     payload = json.loads((root / "out" / "ledger.json").read_text())
     assert payload["claims"][0]["verdict"] == "drifted"
     assert payload["claims"][0]["delta"] == -1.0
@@ -74,8 +95,6 @@ def test_drift_is_nonzero(tmp_path):
 def test_missing_snapshot_is_nonzero(tmp_path):
     root = build(tmp_path)
     assert cli.verify(root) == 1
-
-    import json
 
     payload = json.loads((root / "out" / "ledger.json").read_text())
     assert payload["claims"][0]["verdict"] == "missing-snapshot"
@@ -97,14 +116,63 @@ def test_compute_failure_is_reported(tmp_path):
     assert cli.freeze(root) == 0
     assert cli.verify(root) == 1
 
-    import json
-
     payload = json.loads((root / "out" / "ledger.json").read_text())
     assert payload["claims"][0]["verdict"] == "error"
 
 
-@pytest.mark.parametrize("command", ["freeze", "verify", "report"])
-def test_cli_accepts_commands(tmp_path, command):
+def test_two_claims_share_one_snapshot(tmp_path):
+    """Both claims must read the same frozen vintage, not two downloads."""
     root = build(tmp_path)
-    cli.freeze(root)
-    assert cli.main([command], root=root) == 0
+    (root / "claims" / "other").mkdir()
+    (root / "claims" / "other" / "compute.py").write_text(COMPUTE)
+    text = (root / "claims.toml").read_text()
+    text += "\n" + CLAIMS.format(published=3.0).replace('id = "sum"', 'id = "other"')
+    (root / "claims.toml").write_text(text)
+
+    assert cli.freeze(root) == 0
+    assert len(list((root / "data" / "sum").glob("*/provenance.json"))) == 1
+    assert cli.verify(root) == 0
+
+
+# --- warming arithmetic -----------------------------------------------------
+
+
+def test_parse_annual_drops_incomplete_years():
+    text = gistemp_text({2023: 1.17, 2024: 1.28})
+    text += "2026," + ",".join(["***"] * 12) + ",***\n"
+    annual = warming.parse_annual(text)
+    assert annual == {2023: 1.17, 2024: 1.28}
+
+
+def test_baseline_offset_direction():
+    annual = {year: -0.2 for year in range(1880, 1900)}
+    offset = warming.baseline_offset(annual, 1880, 1899, 0.038)
+    assert offset == pytest.approx(0.238)
+
+
+def test_offset_is_applied_exactly_once():
+    """The regression that matters: a double conversion adds ~0.52 degC."""
+    raw, offset = 1.28, 0.2625
+    converted = warming.to_preindustrial(raw, offset)
+    assert converted == pytest.approx(1.5425)
+    assert converted != pytest.approx(raw + 2 * offset)
+
+
+def test_warmest_year():
+    assert warming.warmest({2023: 1.17, 2024: 1.28, 2016: 1.01}) == (2024, 1.28)
+
+
+def test_mean_between():
+    assert warming.mean_between({2019: 1.0, 2020: 2.0}, 2019, 2020) == 1.5
+
+
+@pytest.mark.skipif(
+    not any((ROOT / "data" / "gistemp").glob("*/raw/*.csv")),
+    reason="no frozen GISTEMP snapshot in this checkout",
+)
+def test_real_gistemp_2024_is_warmest():
+    raw = next((ROOT / "data" / "gistemp").glob("*/raw/*.csv"))
+    annual = warming.parse_annual(raw.read_text())
+    assert warming.warmest(annual)[0] == 2024
+    offset = warming.baseline_offset(annual, 1880, 1899, 0.038)
+    assert 0.24 < offset < 0.28

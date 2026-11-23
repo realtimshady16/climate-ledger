@@ -1,15 +1,32 @@
-# Claim registry.
+# Registries.
 #
-# tier "A": the value is recomputed from pinned raw bytes by claims/<id>/compute.py.
-# tier "B": the value is transcribed from a document; claims/<id>/README.md must
-#           carry the quoted passage, the page, and who checked it.
+# Datasets are fetched and pinned once each; several claims can read the same
+# dataset, so a source is never frozen twice into two different vintages.
 #
-# published: the headline figure this project is checking.
-# tolerance: absolute, in `unit`, for the Tier A drift test.
-# version:   the upstream release the snapshot came from (e.g. "GCB2025").
+# Claims: tier "A" recomputes the value from the pinned bytes by
+# claims/<id>/compute.py; tier "B" is transcribed from a document, and its
+# claims/<id>/README.md must carry `quoted:`, `page:` and `checked_by:`.
+
+[[datasets]]
+id = "smoke"
+version = "fixture-1"
+
+[datasets.source]
+path = "fixtures/smoke.csv"
+
+[[datasets]]
+id = "gistemp"
+version = "GISTEMP v4 (GLB.Ts+dSST.csv)"
+
+[datasets.source]
+url = "https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv"
+filename = "GLB.Ts+dSST.csv"
+
+# --- claims -----------------------------------------------------------------
 
 [[claims]]
 id = "smoke"
+dataset = "smoke"
 tier = "A"
 question = "Does freeze, recompute and compare work end to end?"
 status = "scaffold"
@@ -17,6 +34,20 @@ unit = "count"
 published = 10.0
 tolerance = 0.001
 
-[claims.source]
-path = "fixtures/smoke.csv"
-version = "fixture-1"
+[[claims]]
+id = "warming-year"
+dataset = "gistemp"
+tier = "A"
+question = "Was 2024 the warmest year, and how far above 1850-1900?"
+unit = "degC"
+published = 1.55
+tolerance = 0.06
+
+[[claims]]
+id = "warming-decade"
+dataset = "gistemp"
+tier = "A"
+question = "What did the observed 2015-2024 decade average, above 1850-1900?"
+unit = "degC"
+published = 1.25
+tolerance = 0.05

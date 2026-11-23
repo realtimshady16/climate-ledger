@@ -6,8 +6,16 @@ Each entry answers one question — *claim → source → method → recomputed 
 verdict → date* — from raw, pinned source bytes rather than from a web page's
 summary.
 
-**Status:** stage 1 (scaffold). One smoke claim; real claims land in stages 2–6.
-See `plans/` in the origin workspace.
+**Status:** stage 2. Three claims; the warming pair is real. See `plans/` in the
+origin workspace.
+
+## Claims
+
+| Claim | Tier | What it checks | Recomputed |
+|---|---|---|---|
+| `warming-year` | A | 2024 ≈ 1.55 °C above 1850–1900, warmest on record | 1.5425 |
+| `warming-decade` | A | observed 2015–2024 mean | 1.2475 |
+| `smoke` | A | the pipeline itself | 10 |
 
 ## The two commands that matter
 
@@ -30,11 +38,12 @@ snapshot.
 ## Layout
 
 ```
-claims.toml              claim registry: id, tier, question, source, tolerance
+claims.toml              dataset + claim registries
+constants.toml           named constants, each with a source
 claims/<id>/README.md    public entry: claim, verdict, receipts
 claims/<id>/compute.py   tier A only: reads LEDGER_SNAPSHOT, prints JSON
-data/<id>/<snapshot>/    pinned raw bytes + provenance.json + SHA256SUMS
-data/<id>/LATEST         pointer to the snapshot verify uses
+data/<dataset>/<snap>/   pinned raw bytes + provenance.json + SHA256SUMS
+data/<dataset>/LATEST    pointer to the snapshot verify uses
 out/ledger.json          machine-readable result of the last verify
 REPORT.md                human-readable report, generated
 ```
@@ -45,6 +54,9 @@ REPORT.md                human-readable report, generated
   value and the drift test compares it with the published headline.
 - **B — transcribed.** The number exists only in a document. The README carries
   the quoted passage, the page, and who read it. No parser pretends otherwise.
+
+Datasets are frozen, not claims: two claims reading the same source must never
+end up on two different vintages of it.
 
 Tier B never redistributes restricted documents; it cites them.
 

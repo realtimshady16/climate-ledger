@@ -2,6 +2,9 @@
 
 A snapshot is immutable once written. `verify` only ever reads it; `freeze` only
 ever creates a new one. Nothing in this module rewrites an existing snapshot.
+
+Datasets, not claims, are frozen: two claims that read the same source must never
+end up on two different vintages of it.
 """
 
 from __future__ import annotations
@@ -13,7 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
-FETCHER = "climate-ledger/0.1.0"
+FETCHER = "climate-ledger/0.2.0"
 USER_AGENT = FETCHER + " (+https://github.com/realtimshady16/climate-ledger)"
 
 
@@ -33,14 +36,14 @@ def _stem(url: str) -> str:
     return tail if "." in tail else "source.bin"
 
 
-def freeze_claim(root: Path, claim: dict) -> Path:
+def freeze_dataset(root: Path, dataset: dict) -> Path:
     """Copy or fetch one source into a new immutable snapshot directory."""
     snapshot_id = _snapshot_id()
-    snapshot = root / "data" / claim["id"] / snapshot_id
+    snapshot = root / "data" / dataset["id"] / snapshot_id
     raw = snapshot / "raw"
     raw.mkdir(parents=True, exist_ok=False)
 
-    source = claim["source"]
+    source = dataset["source"]
     if "url" in source:
         request = urllib.request.Request(
             source["url"], headers={"User-Agent": USER_AGENT}
@@ -61,7 +64,7 @@ def freeze_claim(root: Path, claim: dict) -> Path:
     (raw / "SHA256SUMS").write_text(f"{sha256_bytes(body)}  {filename}\n")
 
     provenance = {
-        "claim_id": claim["id"],
+        "dataset_id": dataset["id"],
         "snapshot_id": snapshot_id,
         "origin": origin,
         "kind": kind,
@@ -69,20 +72,20 @@ def freeze_claim(root: Path, claim: dict) -> Path:
         "bytes": len(body),
         "sha256": sha256_bytes(body),
         "filename": filename,
-        "source_version": source.get("version"),
+        "source_version": dataset.get("version"),
         "retrieved_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "fetched_by": FETCHER,
     }
     (snapshot / "provenance.json").write_text(
         json.dumps(provenance, indent=2, sort_keys=True) + "\n"
     )
-    (root / "data" / claim["id"] / "LATEST").write_text(snapshot_id + "\n")
+    (root / "data" / dataset["id"] / "LATEST").write_text(snapshot_id + "\n")
     return snapshot
 
 
-def latest_snapshot(root: Path, claim_id: str) -> Path | None:
-    pointer = root / "data" / claim_id / "LATEST"
+def latest_snapshot(root: Path, dataset_id: str) -> Path | None:
+    pointer = root / "data" / dataset_id / "LATEST"
     if not pointer.exists():
         return None
-    snapshot = root / "data" / claim_id / pointer.read_text().strip()
+    snapshot = root / "data" / dataset_id / pointer.read_text().strip()
     return snapshot if snapshot.is_dir() else None

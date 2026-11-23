@@ -9,7 +9,7 @@ citation, not the bytes. A Tier B entry always cites rather than copies.
 
 | Source | Used for | Status | Licence |
 |---|---|---|---|
-| NASA GISTEMP v4 | warming series | *stage 2* | Open (NASA), to be confirmed |
+| NASA GISTEMP v4 | warming series | in repo (`data/gistemp/`) | NASA open data; credit "NASA GISS/GISTEMP" (FAQ) |
 | Global Carbon Budget (Global Carbon Project) | emissions, remaining carbon budget | *stage 3* | To be confirmed before redistribution |
 | UNEP Emissions Gap Report 2026 | policy projection (Tier B) | *stage 4* | Likely CC BY-NC-SA IGO — cite only, do not redistribute tables |
 | UNEP Adaptation Gap Report | adaptation finance (Tier B) | *stage 4* | Likely CC BY-NC-SA IGO — cite only |
