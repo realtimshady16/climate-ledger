@@ -1,0 +1,13 @@
+{
+  "bytes": 24,
+  "claim_id": "smoke",
+  "fetched_by": "climate-ledger/0.1.0",
+  "filename": "smoke.csv",
+  "http_status": null,
+  "kind": "file",
+  "origin": "fixtures/smoke.csv",
+  "retrieved_at": "2026-11-23T07:20:25+00:00",
+  "sha256": "eee0e5403d93b942722cdd9b58261a54f57a7f26e6c35b187c0dc561ca0d04e0",
+  "snapshot_id": "20261123T072025Z-69af",
+  "source_version": "fixture-1"
+}

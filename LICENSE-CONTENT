@@ -1,0 +1,19 @@
+# Prose and derived data
+
+Copyright (c) 2026 Tim
+
+The written entries in `claims/*/README.md`, `README.md`, `NOTICE.md`,
+`REPORT.md` and the tidy derived files in `out/` are licensed under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0).
+
+You may share and adapt this material for any purpose, including commercially,
+provided you give appropriate credit, link to the licence, and indicate whether
+changes were made.
+
+Full text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Code is licensed separately under the MIT licence in `LICENSE`.
+
+**Upstream data is not covered by this licence.** Raw source bytes are pinned
+under `data/` and remain the property of their producers, under their own terms
+(see `NOTICE.md`). Nothing here grants rights to third-party material.

@@ -1,0 +1,22 @@
+# Claim registry.
+#
+# tier "A": the value is recomputed from pinned raw bytes by claims/<id>/compute.py.
+# tier "B": the value is transcribed from a document; claims/<id>/README.md must
+#           carry the quoted passage, the page, and who checked it.
+#
+# published: the headline figure this project is checking.
+# tolerance: absolute, in `unit`, for the Tier A drift test.
+# version:   the upstream release the snapshot came from (e.g. "GCB2025").
+
+[[claims]]
+id = "smoke"
+tier = "A"
+question = "Does freeze, recompute and compare work end to end?"
+status = "scaffold"
+unit = "count"
+published = 10.0
+tolerance = 0.001
+
+[claims.source]
+path = "fixtures/smoke.csv"
+version = "fixture-1"
