@@ -176,3 +176,78 @@ def test_real_gistemp_2024_is_warmest():
     assert warming.warmest(annual)[0] == 2024
     offset = warming.baseline_offset(annual, 1880, 1899, 0.038)
     assert 0.24 < offset < 0.28
+
+
+# --- tiers, extraction ------------------------------------------------------
+
+
+def test_tier_b_requires_a_snapshot(tmp_path):
+    (tmp_path / "claims" / "b").mkdir(parents=True)
+    (tmp_path / "claims" / "b" / "README.md").write_text(
+        "quoted: q\npage: 1\nchecked_by: me\n"
+    )
+    (tmp_path / "claims.toml").write_text(
+        '[[claims]]\nid = "b"\ndataset = "missing"\ntier = "B"\n'
+        'question = "q"\npublished = 1\n'
+    )
+    assert cli.verify(tmp_path) == 1
+    payload = json.loads((tmp_path / "out" / "ledger.json").read_text())
+    assert payload["claims"][0]["verdict"] == "missing-snapshot"
+
+
+def test_tier_b_reports_transcribed(tmp_path):
+    root = build(tmp_path)
+    (root / "claims" / "b").mkdir()
+    (root / "claims" / "b" / "README.md").write_text(
+        "quoted: q\npage: 1\nchecked_by: me\n"
+    )
+    text = (root / "claims.toml").read_text()
+    text += '\n[[claims]]\nid = "b"\ndataset = "sum"\ntier = "B"\nquestion = "q"\npublished = 1\n'
+    (root / "claims.toml").write_text(text)
+
+    assert cli.freeze(root) == 0
+    assert cli.verify(root) == 0
+    payload = json.loads((root / "out" / "ledger.json").read_text())
+    assert payload["claims"][1]["verdict"] == "transcribed"
+
+
+def test_tier_b_missing_fields_is_an_error(tmp_path):
+    root = build(tmp_path)
+    (root / "claims" / "b").mkdir()
+    (root / "claims" / "b" / "README.md").write_text("quoted: q\n")
+    text = (root / "claims.toml").read_text()
+    text += '\n[[claims]]\nid = "b"\ndataset = "sum"\ntier = "B"\nquestion = "q"\npublished = 1\n'
+    (root / "claims.toml").write_text(text)
+
+    assert cli.freeze(root) == 0
+    assert cli.verify(root) == 1
+
+
+def test_xlsx_extract_is_deterministic(tmp_path):
+    openpyxl = pytest.importorskip("openpyxl")
+    from ledger import extract
+
+    book = openpyxl.Workbook()
+    sheet = book.active
+    sheet.title = "Sheet One"
+    sheet.append(["Year", "value"])
+    sheet.append([2024, 1.5])
+    path = tmp_path / "book.xlsx"
+    book.save(path)
+
+    first = extract.xlsx_to_csv(path, tmp_path / "a", ["Sheet One"])
+    second = extract.xlsx_to_csv(path, tmp_path / "b", ["Sheet One"])
+    assert first[0].name == "Sheet_One.csv"
+    assert first[0].read_bytes() == second[0].read_bytes()
+    assert "2024,1.5" in first[0].read_text()
+
+
+def test_xlsx_extract_rejects_missing_sheet(tmp_path):
+    openpyxl = pytest.importorskip("openpyxl")
+    from ledger import extract
+
+    book = openpyxl.Workbook()
+    path = tmp_path / "book.xlsx"
+    book.save(path)
+    with pytest.raises(ValueError):
+        extract.xlsx_to_csv(path, tmp_path / "a", ["Nope"])

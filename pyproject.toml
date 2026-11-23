@@ -1,6 +1,6 @@
 [project]
 name = "climate-ledger"
-version = "0.2.0"
+version = "0.3.0"
 description = "Recompute the climate numbers everyone cites, from pinned raw data."
 requires-python = ">=3.11"
 
@@ -11,3 +11,5 @@ addopts = "-q"
 
 [dependency-groups]
 dev = ["pytest>=8"]
+# Only `make freeze` needs a spreadsheet reader; `make verify` stays stdlib-only.
+freeze = ["openpyxl>=3.1"]

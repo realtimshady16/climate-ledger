@@ -6,8 +6,8 @@ Each entry answers one question — *claim → source → method → recomputed 
 verdict → date* — from raw, pinned source bytes rather than from a web page's
 summary.
 
-**Status:** stage 2. Three claims; the warming pair is real. See `plans/` in the
-origin workspace.
+**Status:** stage 3. Six claims; all four computed sources reproduce their published
+headlines. See `plans/` in the origin workspace.
 
 ## Claims
 
@@ -15,6 +15,9 @@ origin workspace.
 |---|---|---|---|
 | `warming-year` | A | 2024 ≈ 1.55 °C above 1850–1900, warmest on record | 1.5425 |
 | `warming-decade` | A | observed 2015–2024 mean | 1.2475 |
+| `emissions-fossil-2024` | A | 2024 fossil CO₂ | 37.777 Gt |
+| `emissions-total-2024` | A | 2024 fossil + land-use CO₂ | 42.362 Gt |
+| `budget-1.5` | B | 170 GtCO₂ left ≈ 4 years | transcribed |
 | `smoke` | A | the pipeline itself | 10 |
 
 ## The two commands that matter
@@ -27,9 +30,12 @@ make verify    # recompute offline from the pinned bytes; non-zero on drift
 `freeze` and `verify` are deliberately separate:
 
 - `freeze` touches the network. It never overwrites — each run creates a new
-  timestamped snapshot under `data/<claim>/<snapshot>/`.
-- `verify` never touches the network. It recomputes from the frozen bytes and
-  exits non-zero if a value has moved outside its stated tolerance.
+  timestamped snapshot under `data/<dataset>/<snapshot>/`. Spreadsheets are also
+  converted to derived CSVs here, so the spreadsheet dependency stays on this
+  side of the line.
+- `verify` never touches the network and needs only the standard library. It
+  recomputes from the frozen bytes and exits non-zero if a value has moved
+  outside its stated tolerance.
 
 That split is what makes a one-off artefact safe: the result is reproducible
 forever, and a later refresh is just a new freeze plus a diff against the old

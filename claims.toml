@@ -6,6 +6,9 @@
 # Claims: tier "A" recomputes the value from the pinned bytes by
 # claims/<id>/compute.py; tier "B" is transcribed from a document, and its
 # claims/<id>/README.md must carry `quoted:`, `page:` and `checked_by:`.
+#
+# `extract = "xlsx"` converts a pinned spreadsheet into derived CSVs at freeze
+# time, so verify never needs a spreadsheet dependency.
 
 [[datasets]]
 id = "smoke"
@@ -21,6 +24,25 @@ version = "GISTEMP v4 (GLB.Ts+dSST.csv)"
 [datasets.source]
 url = "https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv"
 filename = "GLB.Ts+dSST.csv"
+
+[[datasets]]
+id = "gcb-workbook"
+version = "Global Carbon Budget 2025 v1.0 (DOI 10.18160/GCP-2025)"
+extract = "xlsx"
+sheets = ["Global Carbon Budget"]
+
+[datasets.source]
+url = "https://data.icos-cp.eu/objects/qSjPBsV1drZnYdH-yCJMmkGn"
+licence_url = "https://data.icos-cp.eu/licence_accept?ids=%5B%22qSjPBsV1drZnYdH-yCJMmkGn%22%5D"
+filename = "Global_Carbon_Budget_2025_v1.0.xlsx"
+
+[[datasets]]
+id = "gcb-paper"
+version = "Friedlingstein et al. 2025, ESSD 18, 3211-3288"
+
+[datasets.source]
+url = "https://zenodo.org/api/records/22748763/files/essd-18-3211-2026.pdf/content"
+filename = "essd-18-3211-2026.pdf"
 
 # --- claims -----------------------------------------------------------------
 
@@ -51,3 +73,29 @@ question = "What did the observed 2015-2024 decade average, above 1850-1900?"
 unit = "degC"
 published = 1.25
 tolerance = 0.05
+
+[[claims]]
+id = "emissions-fossil-2024"
+dataset = "gcb-workbook"
+tier = "A"
+question = "Did fossil CO2 emissions reach 37.8 Gt in 2024?"
+unit = "GtCO2"
+published = 37.8
+tolerance = 0.2
+
+[[claims]]
+id = "emissions-total-2024"
+dataset = "gcb-workbook"
+tier = "A"
+question = "Were total anthropogenic CO2 emissions 42.4 Gt in 2024?"
+unit = "GtCO2"
+published = 42.4
+tolerance = 0.3
+
+[[claims]]
+id = "budget-1.5"
+dataset = "gcb-paper"
+tier = "B"
+question = "How much CO2 is left for 1.5 C, and how many years is that?"
+unit = "GtCO2"
+published = 170

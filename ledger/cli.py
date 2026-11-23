@@ -107,13 +107,13 @@ def verify(root: Path) -> int:
             "checked_at": now(),
         }
 
-        if claim["tier"] == "B":
-            row |= transcribed_row(root, claim)
+        if snapshot is None:
+            row |= {"verdict": "missing-snapshot", "detail": "run `make freeze`"}
             rows.append(row)
             continue
 
-        if snapshot is None:
-            row |= {"verdict": "missing-snapshot", "detail": "run `make freeze`"}
+        if claim["tier"] == "B":
+            row |= transcribed_row(root, claim)
             rows.append(row)
             continue
 
