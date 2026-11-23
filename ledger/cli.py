@@ -65,9 +65,11 @@ def run_compute(root: Path, claim: dict, snapshot: Path) -> dict:
         raise RuntimeError(f"{claim['id']}: compute.py printed non-JSON: {exc}") from exc
 
 
-def freeze(root: Path) -> int:
+def freeze(root: Path, only: list[str] | None = None) -> int:
     count = 0
     for dataset in load_datasets(root):
+        if only and dataset["id"] not in only:
+            continue
         snapshot = provenance.freeze_dataset(root, dataset)
         prov = json.loads((snapshot / "provenance.json").read_text())
         print(
@@ -209,10 +211,11 @@ def main(argv: list[str] | None = None, root: Path | None = None) -> int:
     root = root or PACKAGE_ROOT
     parser = argparse.ArgumentParser(prog="climate-ledger")
     parser.add_argument("command", choices=["freeze", "verify", "report"])
+    parser.add_argument("only", nargs="*", help="freeze only these dataset ids")
     args = parser.parse_args(argv)
 
     if args.command == "freeze":
-        return freeze(root)
+        return freeze(root, only=args.only)
     if args.command == "verify":
         code = verify(root)
         payload = json.loads((root / "out" / "ledger.json").read_text())

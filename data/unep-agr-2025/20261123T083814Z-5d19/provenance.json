@@ -1,0 +1,13 @@
+{
+  "bytes": 15336689,
+  "dataset_id": "unep-agr-2025",
+  "fetched_by": "climate-ledger/0.3.0",
+  "filename": "AGR2025.pdf",
+  "http_status": 200,
+  "kind": "url",
+  "origin": "https://wedocs.unep.org/bitstreams/96045936-f48f-40c8-9094-f27159b6df58/download",
+  "retrieved_at": "2026-11-23T08:38:26+00:00",
+  "sha256": "7aae2efd6169f64163c6e4624df3d0b1754a9ba26493cc0060b77420e73f79cf",
+  "snapshot_id": "20261123T083814Z-5d19",
+  "source_version": "UNEP Adaptation Gap Report 2025: Running on Empty"
+}

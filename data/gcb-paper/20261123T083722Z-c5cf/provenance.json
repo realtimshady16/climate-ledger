@@ -6,8 +6,8 @@
   "http_status": 200,
   "kind": "url",
   "origin": "https://zenodo.org/api/records/22748763/files/essd-18-3211-2026.pdf/content",
-  "retrieved_at": "2026-11-23T08:33:40+00:00",
+  "retrieved_at": "2026-11-23T08:37:49+00:00",
   "sha256": "166e10a66b4dfb1e3396be57dc0596a9e3de6c17a293a2f0b933d5f30572df12",
-  "snapshot_id": "20261123T083308Z-ef8f",
+  "snapshot_id": "20261123T083722Z-c5cf",
   "source_version": "Friedlingstein et al. 2025, ESSD 18, 3211-3288"
 }

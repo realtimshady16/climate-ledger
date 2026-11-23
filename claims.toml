@@ -44,6 +44,22 @@ version = "Friedlingstein et al. 2025, ESSD 18, 3211-3288"
 url = "https://zenodo.org/api/records/22748763/files/essd-18-3211-2026.pdf/content"
 filename = "essd-18-3211-2026.pdf"
 
+[[datasets]]
+id = "unep-egr-2026"
+version = "UNEP Emissions Gap Report 2026: The point of return (DOI 10.59117/20.500.11822/50038)"
+
+[datasets.source]
+url = "https://wedocs.unep.org/bitstreams/3b59cfb3-7b48-404e-9dbb-3774aaa4876d/download"
+filename = "EGR2026.pdf"
+
+[[datasets]]
+id = "unep-agr-2025"
+version = "UNEP Adaptation Gap Report 2025: Running on Empty"
+
+[datasets.source]
+url = "https://wedocs.unep.org/bitstreams/96045936-f48f-40c8-9094-f27159b6df58/download"
+filename = "AGR2025.pdf"
+
 # --- claims -----------------------------------------------------------------
 
 [[claims]]
@@ -99,3 +115,19 @@ tier = "B"
 question = "How much CO2 is left for 1.5 C, and how many years is that?"
 unit = "GtCO2"
 published = 170
+
+[[claims]]
+id = "projection-policies"
+dataset = "unep-egr-2026"
+tier = "B"
+question = "What warming do current policies imply by 2100?"
+unit = "degC"
+published = 2.8
+
+[[claims]]
+id = "finance-adaptation"
+dataset = "unep-agr-2025"
+tier = "B"
+question = "How much adaptation finance actually reached developing countries in 2023?"
+unit = "USD bn"
+published = 26

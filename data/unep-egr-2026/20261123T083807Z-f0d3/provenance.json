@@ -1,0 +1,13 @@
+{
+  "bytes": 7203911,
+  "dataset_id": "unep-egr-2026",
+  "fetched_by": "climate-ledger/0.3.0",
+  "filename": "EGR2026.pdf",
+  "http_status": 200,
+  "kind": "url",
+  "origin": "https://wedocs.unep.org/bitstreams/3b59cfb3-7b48-404e-9dbb-3774aaa4876d/download",
+  "retrieved_at": "2026-11-23T08:38:14+00:00",
+  "sha256": "4b0db7c3068266c0e43b080c7b6dffb97520735756ea7aab8f26df40e9e2fe5b",
+  "snapshot_id": "20261123T083807Z-f0d3",
+  "source_version": "UNEP Emissions Gap Report 2026: The point of return (DOI 10.59117/20.500.11822/50038)"
+}

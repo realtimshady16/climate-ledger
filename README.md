@@ -6,8 +6,9 @@ Each entry answers one question — *claim → source → method → recomputed 
 verdict → date* — from raw, pinned source bytes rather than from a web page's
 summary.
 
-**Status:** stage 3. Six claims; all four computed sources reproduce their published
-headlines. See `plans/` in the origin workspace.
+**Status:** stage 4. Eight claims; all computed sources reproduce their published
+headlines, and the Tier B entries are transcribed with page references. See
+`plans/` in the origin workspace.
 
 ## Claims
 
@@ -18,6 +19,8 @@ headlines. See `plans/` in the origin workspace.
 | `emissions-fossil-2024` | A | 2024 fossil CO₂ | 37.777 Gt |
 | `emissions-total-2024` | A | 2024 fossil + land-use CO₂ | 42.362 Gt |
 | `budget-1.5` | B | 170 GtCO₂ left ≈ 4 years | transcribed |
+| `projection-policies` | B | 2.8 °C under current policies | transcribed |
+| `finance-adaptation` | B | $26bn delivered vs $310bn/yr needed | transcribed |
 | `smoke` | A | the pipeline itself | 10 |
 
 ## The two commands that matter
@@ -69,9 +72,9 @@ Tier B never redistributes restricted documents; it cites them.
 ## Quick start
 
 ```bash
-python3 -m pytest -q     # hermetic tests, no network
-make freeze              # creates data/smoke/...
-make verify              # writes out/ledger.json, regenerates REPORT.md
+make freeze              # fetch every dataset; or: python -m ledger freeze <id> …
+make verify              # stdlib only, offline; writes out/ledger.json + REPORT.md
+make test                # hermetic, no network
 ```
 
 Requires Python ≥ 3.11 and nothing else — no third-party runtime dependencies.

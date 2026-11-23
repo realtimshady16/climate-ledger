@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
-FETCHER = "climate-ledger/0.3.0"
+FETCHER = "climate-ledger/0.4.0"
 USER_AGENT = FETCHER + " (+https://github.com/realtimshady16/climate-ledger)"
 
 

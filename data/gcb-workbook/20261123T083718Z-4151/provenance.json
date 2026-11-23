@@ -9,8 +9,8 @@
   "http_status": 200,
   "kind": "url",
   "origin": "https://data.icos-cp.eu/objects/qSjPBsV1drZnYdH-yCJMmkGn",
-  "retrieved_at": "2026-11-23T08:33:07+00:00",
+  "retrieved_at": "2026-11-23T08:37:21+00:00",
   "sha256": "a928cf06c57576b66761d1fec8224c9a41a781eb63442afc03ba902858dd64a9",
-  "snapshot_id": "20261123T083303Z-8b2c",
+  "snapshot_id": "20261123T083718Z-4151",
   "source_version": "Global Carbon Budget 2025 v1.0 (DOI 10.18160/GCP-2025)"
 }
