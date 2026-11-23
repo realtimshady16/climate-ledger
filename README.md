@@ -6,7 +6,9 @@ Each entry answers one question — *claim → source → method → recomputed 
 verdict → date* — from raw, pinned source bytes rather than from a web page's
 summary.
 
-**Status:** stage 4. Eight claims; all computed sources reproduce their published
+Live: <https://realtimshady16.github.io/climate-ledger/>
+
+**Status:** stage 5. Eight claims; all computed sources reproduce their published
 headlines, and the Tier B entries are transcribed with page references. See
 `plans/` in the origin workspace.
 

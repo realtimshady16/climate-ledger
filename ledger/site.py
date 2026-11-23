@@ -20,6 +20,12 @@ VERDICT_LABEL = {
 }
 
 
+def _recomputed(claim: dict) -> str:
+    if claim.get("value") is None:
+        return '<span class="q">quoted</span>' if claim["tier"] == "B" else "—"
+    return _fmt(claim["value"], claim.get("unit"))
+
+
 def _fmt(value: object, unit: str | None) -> str:
     if value is None or value == "":
         return "—"
@@ -43,7 +49,7 @@ def render(payload: dict, repo: str = REPO) -> str:
           <div class="q">{html.escape(claim["question"])}</div></td>
         <td class="num">{claim["tier"]}</td>
         <td class="num">{_fmt(claim.get("published"), claim.get("unit"))}</td>
-        <td class="num">{_fmt(claim.get("value"), claim.get("unit"))}</td>
+        <td class="num">{_recomputed(claim)}</td>
         <td class="num">{_fmt(claim.get("delta"), None)}</td>
         <td><span class="badge">{html.escape(label)}</span></td>
         <td class="num">{claim["checked_at"][:10]}</td>
