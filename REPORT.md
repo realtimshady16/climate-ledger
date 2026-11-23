@@ -1,8 +1,8 @@
 # Climate ledger — report
 
-Generated 2026-11-23T08:50:25+00:00 by `climate-ledger/0.5.0`.
+Generated 2026-11-23T09:06:43+00:00 by `climate-ledger/0.6.0`.
 
-8 confirmed · 0 transcribed · 0 drifted · 0 failed of 8.
+9 confirmed · 0 transcribed · 0 drifted · 0 failed of 9.
 
 | Claim | Dataset | Tier | Published | Recomputed | Δ | Verdict | Checked |
 |---|---|---|---|---|---|---|---|
@@ -14,5 +14,6 @@ Generated 2026-11-23T08:50:25+00:00 by `climate-ledger/0.5.0`.
 | `budget-1.5` | `gcb-paper` | B | 170 |  |  | confirmed | 2026-11-23 |
 | `projection-policies` | `unep-egr-2026` | B | 2.8 |  |  | confirmed | 2026-11-23 |
 | `finance-adaptation` | `unep-agr-2025` | B | 26 |  |  | confirmed | 2026-11-23 |
+| `sa-coal-share` | `ember-yearly` | A | 81.3 | 81.348 | +0.048 | confirmed | 2026-11-23 |
 
 Recomputed values come from pinned raw bytes; see `data/<dataset>/<snapshot>/provenance.json`.

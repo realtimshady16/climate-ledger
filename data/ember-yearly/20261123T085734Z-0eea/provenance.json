@@ -1,0 +1,13 @@
+{
+  "bytes": 16149377,
+  "dataset_id": "ember-yearly",
+  "fetched_by": "climate-ledger/0.5.0",
+  "filename": "release_generation_yearly_global.csv",
+  "http_status": 200,
+  "kind": "url",
+  "origin": "https://files.ember-energy.org/public-downloads/generation/outputs/release_generation_yearly_global.csv",
+  "retrieved_at": "2026-11-23T08:57:42+00:00",
+  "sha256": "43db1b75e3ae16eff5fc62a4bfa1f10876efa24af953e0069a939441ea95c616",
+  "snapshot_id": "20261123T085734Z-0eea",
+  "source_version": "Ember yearly electricity data (generation, global)"
+}

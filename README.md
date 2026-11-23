@@ -8,7 +8,7 @@ summary.
 
 Live: <https://realtimshady16.github.io/climate-ledger/>
 
-**Status:** stage 5. Eight claims; all computed sources reproduce their published
+**Status:** stage 6. Eight claims; all computed sources reproduce their published
 headlines, and the Tier B entries are transcribed with page references. See
 `plans/` in the origin workspace.
 
@@ -23,6 +23,7 @@ headlines, and the Tier B entries are transcribed with page references. See
 | `budget-1.5` | B | 170 GtCO₂ left ≈ 4 years | transcribed |
 | `projection-policies` | B | 2.8 °C under current policies | transcribed |
 | `finance-adaptation` | B | $26bn delivered vs $310bn/yr needed | transcribed |
+| `sa-coal-share` | A | coal's share of SA electricity, 2025 | 81.348 % |
 | `smoke` | A | the pipeline itself | 10 |
 
 ## The two commands that matter

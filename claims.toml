@@ -60,6 +60,14 @@ version = "UNEP Adaptation Gap Report 2025: Running on Empty"
 url = "https://wedocs.unep.org/bitstreams/96045936-f48f-40c8-9094-f27159b6df58/download"
 filename = "AGR2025.pdf"
 
+[[datasets]]
+id = "ember-yearly"
+version = "Ember yearly electricity data (generation, global)"
+
+[datasets.source]
+url = "https://files.ember-energy.org/public-downloads/generation/outputs/release_generation_yearly_global.csv"
+filename = "release_generation_yearly_global.csv"
+
 # --- claims -----------------------------------------------------------------
 
 [[claims]]
@@ -131,3 +139,12 @@ tier = "B"
 question = "How much adaptation finance actually reached developing countries in 2023?"
 unit = "USD bn"
 published = 26
+
+[[claims]]
+id = "sa-coal-share"
+dataset = "ember-yearly"
+tier = "A"
+question = "What share of South Africa's electricity came from coal in 2025?"
+unit = "%"
+published = 81.3
+tolerance = 0.5
