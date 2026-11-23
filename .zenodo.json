@@ -1,0 +1,21 @@
+{
+  "title": "Climate ledger: the climate numbers the news quotes, recomputed from pinned sources",
+  "description": "<p>A public, reproducible verification of the climate numbers that circulate in reporting. Each entry is a claim, its source, the method, the recomputed value, and a verdict dated the day it was checked.</p><p><code>make freeze</code> fetched each source exactly once and pinned the bytes with a SHA-256 and a provenance record; <code>make verify</code> recomputes every value offline from those bytes and exits non-zero if one moves outside its stated tolerance. Tier A entries are computed from machine-readable data; Tier B entries are transcribed from a document with a page reference and a second read, and the difference is shown rather than hidden.</p><p>Scope at release: global temperature, fossil and total CO2 emissions, the remaining 1.5 C carbon budget, the warming implied by current policies, adaptation finance, and South Africa's coal share of electricity.</p>",
+  "creators": [
+    {
+      "name": "Tim"
+    }
+  ],
+  "license": "cc-by-4.0",
+  "upload_type": "dataset",
+  "access_right": "open",
+  "keywords": [
+    "climate",
+    "carbon budget",
+    "emissions",
+    "reproducibility",
+    "open data",
+    "fact checking"
+  ],
+  "notes": "Code is MIT licensed; prose and derived data are CC BY 4.0. Pinned upstream sources keep their own terms, recorded in NOTICE.md. Some sources are cited but deliberately not redistributed."
+}

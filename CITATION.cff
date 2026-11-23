@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this ledger, cite it and the upstream sources it names."
+title: "Climate ledger: the climate numbers the news quotes, recomputed from pinned sources"
+abstract: >-
+  A public, reproducible verification of climate numbers in circulation: each
+  claim carries its source, method, recomputed value and a dated verdict. Sources
+  are frozen once with a SHA-256 and recomputed offline, so results are
+  reproducible rather than trusted.
+authors:
+  - name: Tim
+license: CC-BY-4.0
+repository-code: "https://github.com/realtimshady16/climate-ledger"
+url: "https://realtimshady16.github.io/climate-ledger/"
+keywords:
+  - climate
+  - carbon budget
+  - emissions
+  - reproducibility
+  - open data
