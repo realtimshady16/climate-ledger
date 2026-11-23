@@ -31,6 +31,7 @@ headlines, and the Tier B entries are transcribed with page references. See
 ```bash
 make freeze    # fetch each source once, pin bytes + sha256 + provenance
 make verify    # recompute offline from the pinned bytes; non-zero on drift
+make diff      # compare the two most recent snapshots: what moved, and by how much
 ```
 
 `freeze` and `verify` are deliberately separate:
@@ -44,8 +45,9 @@ make verify    # recompute offline from the pinned bytes; non-zero on drift
   outside its stated tolerance.
 
 That split is what makes a one-off artefact safe: the result is reproducible
-forever, and a later refresh is just a new freeze plus a diff against the old
-snapshot.
+forever, and a later refresh is just a new freeze plus `make diff` against the
+old snapshot. `diff` answers the question that matters — not "did the file
+change" but "did a number move, by how much, and is it still inside tolerance".
 
 ## Layout
 

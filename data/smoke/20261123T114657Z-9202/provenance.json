@@ -1,13 +1,13 @@
 {
   "bytes": 24,
   "dataset_id": "smoke",
-  "fetched_by": "climate-ledger/0.3.0",
+  "fetched_by": "climate-ledger/1.0.0",
   "filename": "smoke.csv",
   "http_status": null,
   "kind": "file",
   "origin": "fixtures/smoke.csv",
-  "retrieved_at": "2026-11-23T08:37:17+00:00",
+  "retrieved_at": "2026-11-23T11:46:57+00:00",
   "sha256": "eee0e5403d93b942722cdd9b58261a54f57a7f26e6c35b187c0dc561ca0d04e0",
-  "snapshot_id": "20261123T083717Z-4e38",
+  "snapshot_id": "20261123T114657Z-9202",
   "source_version": "fixture-1"
 }

@@ -216,12 +216,14 @@ def render_report(payload: dict) -> str:
 def main(argv: list[str] | None = None, root: Path | None = None) -> int:
     root = root or PACKAGE_ROOT
     parser = argparse.ArgumentParser(prog="climate-ledger")
-    parser.add_argument("command", choices=["freeze", "verify", "report"])
+    parser.add_argument("command", choices=["freeze", "verify", "report", "diff"])
     parser.add_argument("only", nargs="*", help="freeze only these dataset ids")
     args = parser.parse_args(argv)
 
     if args.command == "freeze":
         return freeze(root, only=args.only)
+    if args.command == "diff":
+        return diff(root, only=args.only)
     if args.command == "verify":
         code = verify(root)
         payload = json.loads((root / "out" / "ledger.json").read_text())
@@ -231,3 +233,131 @@ def main(argv: list[str] | None = None, root: Path | None = None) -> int:
         verify(root)
     print((root / "REPORT.md").read_text())
     return 0
+
+
+# --- diff -------------------------------------------------------------------
+
+
+def snapshots_for(root: Path, dataset_id: str) -> list[Path]:
+    base = root / "data" / dataset_id
+    if not base.is_dir():
+        return []
+    return [
+        path
+        for path in sorted(base.iterdir())
+        if path.is_dir() and (path / "provenance.json").exists()
+    ]
+
+
+def _derived_fingerprint(snapshot: Path) -> str | None:
+    derived = snapshot / "derived"
+    if not derived.is_dir():
+        return None
+    import hashlib
+
+    digest = hashlib.sha256()
+    for path in sorted(derived.iterdir()):
+        digest.update(path.name.encode())
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return digest.hexdigest()
+
+
+def _claim_change(root: Path, claim: dict, old: Path, new: Path) -> dict:
+    row: dict = {"id": claim["id"], "tier": claim["tier"]}
+    if claim["tier"] != "A":
+        row["note"] = "tier B: re-read the quoted passage; nothing to recompute"
+        return row
+
+    for label, snapshot in (("previous", old), ("current", new)):
+        try:
+            row[label] = float(run_compute(root, claim, snapshot)["value"])
+        except RuntimeError as exc:
+            row[label] = None
+            row[f"{label}_error"] = str(exc)
+
+    if row["previous"] is not None and row["current"] is not None:
+        row["delta"] = round(row["current"] - row["previous"], 6)
+        row["within_tolerance"] = (
+            abs(row["current"] - float(claim["published"])) <= float(claim["tolerance"])
+        )
+    return row
+
+
+def diff(root: Path, only: list[str] | None = None) -> int:
+    """Compare the two most recent snapshots of each dataset and every claim on it.
+
+    The question this answers is not "did the file change" but "did a number the
+    ledger asserts move, by how much, and is it still inside tolerance".
+    """
+    by_dataset: dict[str, list[dict]] = {}
+    for claim in load_claims(root):
+        by_dataset.setdefault(claim.get("dataset"), []).append(claim)
+
+    report = []
+    for dataset in load_datasets(root):
+        if only and dataset["id"] not in only:
+            continue
+        snapshots = snapshots_for(root, dataset["id"])
+        entry: dict = {
+            "dataset": dataset["id"],
+            "snapshots": [path.name for path in snapshots],
+            "claims": [],
+        }
+        if len(snapshots) < 2:
+            entry["note"] = f"{len(snapshots)} snapshot(s) — freeze again to compare"
+            report.append(entry)
+            continue
+
+        old, new = snapshots[-2], snapshots[-1]
+        previous = json.loads((old / "provenance.json").read_text())
+        current = json.loads((new / "provenance.json").read_text())
+        entry |= {
+            "previous": old.name,
+            "current": new.name,
+            "raw_changed": previous["sha256"] != current["sha256"],
+            "bytes_previous": previous["bytes"],
+            "bytes_current": current["bytes"],
+            "derived_changed": _derived_fingerprint(old) != _derived_fingerprint(new),
+        }
+        for claim in by_dataset.get(dataset["id"], []):
+            entry["claims"].append(_claim_change(root, claim, old, new))
+        report.append(entry)
+
+    print_diff(report)
+    out = root / "out"
+    out.mkdir(exist_ok=True)
+    (out / "diff.json").write_text(
+        json.dumps({"generated_at": now(), "datasets": report}, indent=2) + "\n"
+    )
+    return 0
+
+
+def print_diff(report: list[dict]) -> None:
+    for entry in report:
+        print(f"\ndataset {entry['dataset']}")
+        if entry.get("note"):
+            print(f"  {entry['note']}")
+            continue
+        raw = "changed" if entry["raw_changed"] else "unchanged"
+        derived = (
+            "n/a"
+            if entry["derived_changed"] is None
+            else ("changed" if entry["derived_changed"] else "unchanged")
+        )
+        print(f"  raw      {entry['previous']} -> {entry['current']}  {raw}")
+        print(
+            f"  bytes    {entry['bytes_previous']} -> {entry['bytes_current']}  "
+            f"derived {derived}"
+        )
+        for row in entry["claims"]:
+            if "note" in row:
+                print(f"  {row['id']:<28} {row['note']}")
+                continue
+            if row.get("previous") is None or row.get("current") is None:
+                print(f"  {row['id']:<28} compute failed on one snapshot")
+                continue
+            flag = "" if row["within_tolerance"] else "  DRIFTED vs published"
+            print(
+                f"  {row['id']:<28} {row['previous']:>10.4f} -> {row['current']:>10.4f}"
+                f"  Δ {row['delta']:+9.4f}{flag}"
+            )

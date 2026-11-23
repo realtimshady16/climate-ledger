@@ -267,3 +267,61 @@ def test_tier_b_second_read_confirms(tmp_path):
     assert cli.verify(root) == 0
     payload = json.loads((root / "out" / "ledger.json").read_text())
     assert payload["claims"][1]["verdict"] == "confirmed"
+
+
+# --- diff -------------------------------------------------------------------
+
+
+def _diff(tmp_path):
+    assert cli.diff(tmp_path) == 0
+    return json.loads((tmp_path / "out" / "diff.json").read_text())["datasets"][0]
+
+
+def test_diff_single_snapshot_has_nothing_to_compare(tmp_path):
+    root = build(tmp_path)
+    assert cli.freeze(root) == 0
+    entry = _diff(root)
+    assert "note" in entry
+    assert entry["claims"] == []
+
+
+def test_diff_identical_snapshot_is_unchanged(tmp_path):
+    root = build(tmp_path)
+    assert cli.freeze(root) == 0
+    assert cli.freeze(root) == 0
+    entry = _diff(root)
+    assert entry["raw_changed"] is False
+    claim = entry["claims"][0]
+    assert claim["delta"] == 0.0
+    assert claim["within_tolerance"] is True
+
+
+def test_diff_detects_a_revision(tmp_path):
+    root = build(tmp_path)
+    assert cli.freeze(root) == 0
+    (root / "fixtures" / "x.csv").write_text("v\n1\n3\n")
+    assert cli.freeze(root) == 0
+    entry = _diff(root)
+    assert entry["raw_changed"] is True
+    claim = entry["claims"][0]
+    assert claim["previous"] == 3.0
+    assert claim["current"] == 4.0
+    assert claim["delta"] == 1.0
+    assert claim["within_tolerance"] is False
+
+
+def test_diff_reports_tier_b_without_recomputing(tmp_path):
+    root = build(tmp_path)
+    (root / "claims" / "b").mkdir()
+    (root / "claims" / "b" / "README.md").write_text(
+        "quoted: q\npage: 1\nchecked_by: me\n"
+    )
+    text = (root / "claims.toml").read_text()
+    text += '\n[[claims]]\nid = "b"\ndataset = "sum"\ntier = "B"\nquestion = "q"\npublished = 1\n'
+    (root / "claims.toml").write_text(text)
+    assert cli.freeze(root) == 0
+    assert cli.freeze(root) == 0
+    entry = _diff(root)
+    tier_b = next(row for row in entry["claims"] if row["id"] == "b")
+    assert "previous" not in tier_b
+    assert "note" in tier_b

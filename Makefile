@@ -1,9 +1,12 @@
 PY ?= python3
 
-.PHONY: freeze verify report test clean
+.PHONY: freeze verify diff report test clean
 
 freeze:
 	uv run --quiet --group freeze python -m ledger freeze
+
+diff:
+	$(PY) -m ledger diff
 
 verify:
 	$(PY) -m ledger verify
