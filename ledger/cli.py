@@ -15,7 +15,7 @@ import tomllib
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import provenance
+from . import provenance, site
 
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 
@@ -179,6 +179,7 @@ def write_outputs(root: Path, rows: list[dict]) -> None:
     }
     (out / "ledger.json").write_text(json.dumps(payload, indent=2) + "\n")
     (root / "REPORT.md").write_text(render_report(payload))
+    (root / "index.html").write_text(site.render(payload))
 
 
 def render_report(payload: dict) -> str:

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Climate ledger — 8 confirmed of 8</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --fg: #16181d; --muted: #5c6270; --line: #d8dbe2;
+    --ok: #1a7f4b; --warn: #8a5a00; --bad: #a4272d; --chip: #eef0f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg: #e8eaee; --muted: #9aa2b1; --line: #333844;
+             --ok: #4ec98a; --warn: #e0b154; --bad: #ff8a8a; --chip: #1e222b; }
+  }
+  body { margin: 0; padding: 24px 16px 48px; color: var(--fg);
+          font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: -0.01em; }
+  p.sub { margin: 0 0 18px; color: var(--muted); }
+  .tally { display: flex; gap: 18px; flex-wrap: wrap; margin: 0 0 22px;
+            font-variant-numeric: tabular-nums; }
+  .tally b { font-size: 1.35rem; display: block; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line);
+            vertical-align: top; }
+  th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;
+        color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .q { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 999px;
+            background: var(--chip); font-size: 0.8rem; white-space: nowrap; }
+  .v-confirmed .badge { color: var(--ok); }
+  .v-drifted .badge, .v-error .badge, .v-missing-snapshot .badge { color: var(--bad); }
+  .v-transcribed .badge { color: var(--warn); }
+  footer { margin-top: 26px; color: var(--muted); font-size: 0.85rem; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; }
+  a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Climate ledger</h1>
+  <p class="sub">The climate numbers the news quotes, recomputed from pinned source
+  bytes. Generated 2026-11-23T08:48:20+00:00.</p>
+
+  <div class="tally">
+    <div><b>8</b>confirmed</div>
+    <div><b>0</b>transcribed</div>
+    <div><b>0</b>drifted</div>
+    <div><b>0</b>failed</div>
+    <div><b>8</b>claims</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Claim</th><th class="num">Tier</th><th class="num">Published</th>
+      <th class="num">Recomputed</th><th class="num">Δ</th><th>Verdict</th>
+      <th class="num">Checked</th></tr>
+    </thead>
+    <tbody>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/smoke/README.md"><code>smoke</code></a>
+          <div class="q">Does freeze, recompute and compare work end to end?</div></td>
+        <td class="num">A</td>
+        <td class="num">10 count</td>
+        <td class="num">10 count</td>
+        <td class="num">0</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/warming-year/README.md"><code>warming-year</code></a>
+          <div class="q">Was 2024 the warmest year, and how far above 1850-1900?</div></td>
+        <td class="num">A</td>
+        <td class="num">1.55 degC</td>
+        <td class="num">1.542 degC</td>
+        <td class="num">-0.007</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/warming-decade/README.md"><code>warming-decade</code></a>
+          <div class="q">What did the observed 2015-2024 decade average, above 1850-1900?</div></td>
+        <td class="num">A</td>
+        <td class="num">1.25 degC</td>
+        <td class="num">1.248 degC</td>
+        <td class="num">-0.003</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/emissions-fossil-2024/README.md"><code>emissions-fossil-2024</code></a>
+          <div class="q">Did fossil CO2 emissions reach 37.8 Gt in 2024?</div></td>
+        <td class="num">A</td>
+        <td class="num">37.8 GtCO2</td>
+        <td class="num">37.777 GtCO2</td>
+        <td class="num">-0.023</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/emissions-total-2024/README.md"><code>emissions-total-2024</code></a>
+          <div class="q">Were total anthropogenic CO2 emissions 42.4 Gt in 2024?</div></td>
+        <td class="num">A</td>
+        <td class="num">42.4 GtCO2</td>
+        <td class="num">42.362 GtCO2</td>
+        <td class="num">-0.038</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/budget-1.5/README.md"><code>budget-1.5</code></a>
+          <div class="q">How much CO2 is left for 1.5 C, and how many years is that?</div></td>
+        <td class="num">B</td>
+        <td class="num">170 GtCO2</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/projection-policies/README.md"><code>projection-policies</code></a>
+          <div class="q">What warming do current policies imply by 2100?</div></td>
+        <td class="num">B</td>
+        <td class="num">2.8 degC</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+      <tr class="v-confirmed">
+        <td><a href="https://github.com/realtimshady16/climate-ledger/blob/main/claims/finance-adaptation/README.md"><code>finance-adaptation</code></a>
+          <div class="q">How much adaptation finance actually reached developing countries in 2023?</div></td>
+        <td class="num">B</td>
+        <td class="num">26 USD bn</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td><span class="badge">confirmed</span></td>
+        <td class="num">2026-11-23</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    <p><b>Method.</b> <code>make freeze</code> fetched each source once and pinned the
+    bytes with a SHA-256; <code>make verify</code> recomputed every value offline from
+    those bytes and exits non-zero if one moves outside its stated tolerance.
+    Tier A is computed; Tier B is transcribed from a document with a page reference.
+    The difference is shown, not hidden.</p>
+    <p>Code MIT, prose and derived data CC BY 4.0. Upstream sources keep their own
+    terms — see <a href="https://github.com/realtimshady16/climate-ledger/blob/main/NOTICE.md">NOTICE.md</a>.
+    Source and method for each entry: <a href="https://github.com/realtimshady16/climate-ledger">github.com/realtimshady16/climate-ledger</a>.</p>
+  </footer>
+</main>
+</body>
+</html>
